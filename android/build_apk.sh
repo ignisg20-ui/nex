@@ -8,7 +8,7 @@
 #     platforms/android-34/android.jar
 #   JAVA_HOME with javac >= 11 (Java 17 is fine).
 #
-# The output APK lands at android/build/HEXON-BETA.apk and is signed with
+# The output APK lands at android/build/HEXON.apk and is signed with
 # a local keystore (regenerated if missing). The build still uses the
 # debug signing config; rename of the artifact is purely cosmetic.
 # -------------------------------------------------------------------------
@@ -121,10 +121,10 @@ fi
     --v2-signing-enabled true \
     --v3-signing-enabled true \
     --min-sdk-version 21 \
-    --out "$OUT/HEXON-BETA.apk" \
+    --out "$OUT/HEXON.apk" \
     "$OUT/aligned.apk"
 
-"$APKSIGNER" verify --print-certs "$OUT/HEXON-BETA.apk" >/dev/null
+"$APKSIGNER" verify --print-certs "$OUT/HEXON.apk" >/dev/null
 echo
-echo "OK  -> $OUT/HEXON-BETA.apk"
-ls -la "$OUT/HEXON-BETA.apk"
+echo "OK  -> $OUT/HEXON.apk"
+ls -la "$OUT/HEXON.apk"

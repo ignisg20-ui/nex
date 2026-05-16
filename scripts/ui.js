@@ -649,18 +649,41 @@ function renderAdminScreen(){
       const u = Math.max(1, Math.min(9999, isFinite(raw) ? raw : 1));
       genUsesInput.value = String(u);
       updateUsesHint();
+      refreshGenBtnState();
     });
     updateUsesHint();
   }
+
+  /* Reactive Generate button. The admin must fill ID + Amount + Uses
+     before the code can be produced — disabling the button (with the
+     hint label morphing to "Fill: ...") is friendlier than a toast
+     fired after the click. */
+  function refreshGenBtnState(){
+    if (!genBtn) return;
+    const idOk   = !!(genIdInput.value || "").trim();
+    const amtOk  = (parseInt(genAmtInput.value, 10)  || 0) > 0;
+    const usesOk = (parseInt(genUsesInput.value, 10) || 0) >= 1;
+    const ready  = idOk && amtOk && usesOk;
+    genBtn.disabled = !ready;
+    genBtn.classList.toggle("is-ready", ready);
+  }
+  genIdInput  && genIdInput.addEventListener("input", refreshGenBtnState);
+  genAmtInput && genAmtInput.addEventListener("input", refreshGenBtnState);
+  genUsesInput && genUsesInput.addEventListener("input", refreshGenBtnState);
+  fillSelf    && fillSelf.addEventListener("click", () => requestAnimationFrame(refreshGenBtnState));
+  panel.querySelectorAll(".admin-quick").forEach(b => b.addEventListener("click", () => requestAnimationFrame(refreshGenBtnState)));
+  refreshGenBtnState();
 
   genBtn.addEventListener("click", async () => {
     const id   = (genIdInput.value || "").trim();
     const amt  = parseInt(genAmtInput.value, 10) || 0;
     const uses = Math.max(1, Math.min(9999, parseInt(genUsesInput.value, 10) || 1));
-    if (!id || amt <= 0){
+    /* Defence-in-depth: button is disabled while invalid, but a
+       second guard here covers programmatic clicks too. */
+    if (!id || amt <= 0 || uses < 1){
       genOut.textContent = "—";
       genCopy.disabled = true;
-      toast(t("admin.gen.err.input") || "ID + amount required", "error");
+      toast(t("admin.gen.err.input") || "ID, amount and uses required", "error");
       return;
     }
     try {
