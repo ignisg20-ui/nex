@@ -611,9 +611,14 @@ function placePiece(idx, br, bc){
     state.run.movesSinceClear += 1;
   }
 
-  // XP grant
+  // XP grant — three independent ledgers:
+  //   1) global account XP (drives the menu Lvl + level-up FX)
+  //   2) per-skin mastery XP (gainSkinMastery → unlocks visual aura)
+  //   3) Battle Pass XP (bpAddXp → drives the seasonal track)
   const xpGain = placedCells + linesCleared*5;
   addXP(xpGain);
+  if (typeof gainSkinMastery === "function") gainSkinMastery(placedCells * MASTERY_PER_PLACE + linesCleared * MASTERY_PER_LINE);
+  if (typeof bpAddXp === "function")        bpAddXp(placedCells + linesCleared * 12);
 
   // stats updates
   if(state.run.score > state.run.bestRun) state.run.bestRun = state.run.score;

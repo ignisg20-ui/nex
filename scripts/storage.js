@@ -25,8 +25,29 @@ function buildStateSnapshot(){
     usedActivationCodes: state.usedActivationCodes || [],
     activationUsage: state.activationUsage || {},
     activations: state.activations || { redeemed: 0, totalReceived: 0, generated: 0 },
+    /* New (Battle Pass / Seasonal / Mastery / Custom skins / Marketplace) */
+    battlepass: state.battlepass || { season:"", xp:0, claimedFree:[], claimedPremium:[], premium:false },
+    seasonal:   state.seasonal   || { unlocked:[] },
+    mastery:    state.mastery    || {},
+    customSkins:state.customSkins|| { owned:[], equipped:"", lastListedAt:0 },
+    marketplace:state.marketplace|| { listings:[], purchased:[] },
     run: null, // not persisted across reloads (live game state)
   };
+}
+
+/* ---------- Save coalescing ----------
+   Every leaf module calls saveState() after a single mutation, which can
+   pile up during a busy game tick (drag, place, animate, more drags…).
+   We coalesce those into one localStorage write per animation frame so
+   the hot path doesn't pay JSON.stringify + setItem repeatedly. The disk
+   mirror still runs on each tick because the bridge debounces it itself. */
+let _saveRaf = 0;
+function saveStateSoon(){
+  if (_saveRaf) return;
+  _saveRaf = requestAnimationFrame(() => {
+    _saveRaf = 0;
+    saveState();
+  });
 }
 function saveState(){
   try{

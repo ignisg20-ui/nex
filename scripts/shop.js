@@ -43,7 +43,10 @@ const COIN_BUNDLES = [
    per user instructions — change in one place if it ever moves. */
 const SHOP_TELEGRAM_HANDLE = "PloxoyHard";
 
-let shopTab = "skins";        // "skins" | "coins" | "redeem"
+/* Tabs: classic three + the three new feature panes ("custom" for
+   the skin editor, "market" for player-to-player trading, "pass" for
+   the Battle Pass overview that's also reachable from the menu). */
+let shopTab = "skins";        // "skins" | "coins" | "redeem" | "custom" | "market" | "pass"
 let pendingBundleId = null;   // bundle awaiting confirmation in #modal-shop-confirm
 
 function openShopScreen(){
@@ -57,6 +60,9 @@ function renderShop(){
   if(shopTab === "skins")       paintSkinGrid();
   else if(shopTab === "coins")  paintCoinGrid();
   else if(shopTab === "redeem") paintRedeemPane();
+  else if(shopTab === "custom" && typeof renderCustomEditor === "function") renderCustomEditor();
+  else if(shopTab === "market" && typeof renderMarketplace === "function") renderMarketplace();
+  else if(shopTab === "pass"   && typeof renderBattlePass === "function")  renderBattlePass();
   renderWallet();
 }
 
@@ -163,12 +169,21 @@ function paintShopTabs(){
   document.querySelectorAll(".shop-tab").forEach(t => {
     t.classList.toggle("on", t.dataset.tab === shopTab);
   });
-  const skinsPane  = document.getElementById("shop-pane-skins");
-  const coinsPane  = document.getElementById("shop-pane-coins");
-  const redeemPane = document.getElementById("shop-pane-redeem");
-  if(skinsPane)  skinsPane.classList.toggle("hidden",  shopTab !== "skins");
-  if(coinsPane)  coinsPane.classList.toggle("hidden",  shopTab !== "coins");
-  if(redeemPane) redeemPane.classList.toggle("hidden", shopTab !== "redeem");
+  /* Every pane lives under .shop-body; toggle the .hidden class so
+     only one is visible at a time. Looking the panes up by id and
+     toggling individually keeps the DOM stable across feature
+     additions — no innerHTML wipes here. */
+  const panes = {
+    skins:  document.getElementById("shop-pane-skins"),
+    coins:  document.getElementById("shop-pane-coins"),
+    redeem: document.getElementById("shop-pane-redeem"),
+    custom: document.getElementById("shop-pane-custom"),
+    market: document.getElementById("shop-pane-market"),
+    pass:   document.getElementById("shop-pane-pass"),
+  };
+  for (const k in panes){
+    if (panes[k]) panes[k].classList.toggle("hidden", shopTab !== k);
+  }
 }
 
 /* ---------------- Skins tab ---------------- */
@@ -379,6 +394,22 @@ function initShopWiring(){
   /* Menu tile. */
   const tile = document.getElementById("menu-shop");
   if(tile) tile.addEventListener("click", openShopScreen);
+
+  /* Battle Pass menu tile — jumps into the shop with the BP tab active. */
+  const bpTile = document.getElementById("menu-battlepass");
+  if(bpTile) bpTile.addEventListener("click", () => {
+    shopTab = "pass";
+    openShopScreen();
+  });
+
+  /* Seasonal banner on the menu screen — opens the season pane.
+     Hidden by default; renderMenuSeason() un-hides it once the
+     player is loaded so we don't flash an empty card pre-login. */
+  const seasonBanner = document.getElementById("menu-season-banner");
+  if(seasonBanner) seasonBanner.addEventListener("click", () => {
+    if (typeof go === "function") go("season");
+    if (typeof renderSeasonal === "function") renderSeasonal();
+  });
 
   applySkinAccent();
 }

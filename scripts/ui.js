@@ -81,7 +81,23 @@ function init() {
     if (persisted.skins)  state.skins  = Object.assign(state.skins  || { equipped:"default", unlocked:["default"] }, persisted.skins);
     if (Array.isArray(persisted.usedActivationCodes)) state.usedActivationCodes = persisted.usedActivationCodes;
     if (persisted.activations) state.activations = Object.assign(state.activations || { redeemed:0, totalReceived:0, generated:0 }, persisted.activations);
+    /* Newer feature blobs — battlepass / seasonal / mastery / customSkins /
+       marketplace. All are independently shaped so missing fields just fall
+       back to the in-memory defaults defined at the top of state.js. */
+    if (persisted.battlepass)  state.battlepass  = Object.assign(state.battlepass,  persisted.battlepass);
+    if (persisted.seasonal)    state.seasonal    = Object.assign(state.seasonal,    persisted.seasonal);
+    if (persisted.mastery)     state.mastery     = persisted.mastery;
+    if (persisted.customSkins) state.customSkins = Object.assign(state.customSkins, persisted.customSkins);
+    if (persisted.marketplace) state.marketplace = Object.assign(state.marketplace, persisted.marketplace);
   }
+  /* Make seasonal + custom SKINS visible to the renderer as early as
+     possible — this lets the saved equipped-skin id resolve correctly
+     even if the user picked a custom or seasonal one before the
+     editor or season screen has been opened in this session. */
+  if (typeof ensureSeasonalRegistered === "function") ensureSeasonalRegistered();
+  if (typeof rehydrateCustomSkins  === "function") rehydrateCustomSkins();
+  if (typeof ensureBattlePass      === "function") ensureBattlePass();
+  if (typeof ensureMarketplace     === "function") ensureMarketplace();
 
   /* Resurrect a permanent player ID from a dedicated key. This survives
      "Reset all" (which clears the main state) so the ID truly never
@@ -432,6 +448,7 @@ function go(screen) {
   if (screen === "leaderboards") renderLeaderboards();
   if (screen === "achievements") renderAchievements();
   if (screen === "shop" && typeof renderShop === "function") renderShop();
+  if (screen === "season" && typeof renderSeasonal === "function") renderSeasonal();
   if (screen === "admin" && typeof renderAdminScreen === "function") renderAdminScreen();
   if (typeof renderWallet === "function") renderWallet();
   if (screen === "game") updateHUD();
@@ -461,6 +478,12 @@ function renderMenu() {
   if (admTile){
     const showAdm = (typeof isAdminUser === "function") && isAdminUser();
     admTile.classList.toggle("hidden", !showAdm);
+  }
+  /* Seasonal banner — always visible (the season rotates monthly so
+     there's always *something* live). We just refresh the name. */
+  const seasonNameEl = document.getElementById("menu-season-name");
+  if (seasonNameEl && typeof seasonName === "function"){
+    seasonNameEl.textContent = seasonName();
   }
 }
 

@@ -16,6 +16,7 @@
 <link rel="stylesheet" href="styles/components.css">
 <link rel="stylesheet" href="styles/game.css">
 <link rel="stylesheet" href="styles/shop.css">
+<link rel="stylesheet" href="styles/features.css">
 <link rel="stylesheet" href="styles/effects.css">
 
 <!-- Boot splash — inlined so it paints on the very first frame
@@ -458,6 +459,18 @@
           </div>
         </button>
 
+        <!-- Seasonal event banner. Rendered/hidden by renderMenuSeason(). -->
+        <button class="season-banner glass" id="menu-season-banner" type="button">
+          <div class="season-banner-icon"><svg class="ic-svg xl"><use href="#i-sparkle"/></svg></div>
+          <div class="season-banner-text">
+            <div class="big" data-i18n="season.title">Seasonal event</div>
+            <div class="sub" id="menu-season-name">—</div>
+          </div>
+          <div class="season-banner-cta">
+            <svg class="ic-svg lg"><use href="#i-arrow-left"/></svg>
+          </div>
+        </button>
+
         <div class="menu-grid">
           <button class="menu-tile glass" data-go="tasks">
             <svg class="ic-svg lg"><use href="#i-tasks"/></svg>
@@ -771,6 +784,18 @@
           <svg class="ic-svg"><use href="#i-skin"/></svg>
           <span data-i18n="shop.tab.skins">Skins</span>
         </button>
+        <button class="shop-tab" data-tab="custom" role="tab">
+          <svg class="ic-svg"><use href="#i-sparkle"/></svg>
+          <span data-i18n="shop.tab.custom">Custom</span>
+        </button>
+        <button class="shop-tab" data-tab="market" role="tab">
+          <svg class="ic-svg"><use href="#i-share"/></svg>
+          <span data-i18n="shop.tab.market">Market</span>
+        </button>
+        <button class="shop-tab" data-tab="pass" role="tab">
+          <svg class="ic-svg"><use href="#i-star"/></svg>
+          <span data-i18n="shop.tab.pass">Battle Pass</span>
+        </button>
         <button class="shop-tab" data-tab="coins" role="tab">
           <svg class="ic-svg"><use href="#i-coin"/></svg>
           <span data-i18n="shop.tab.coins">HEX coins</span>
@@ -814,7 +839,31 @@
             </div>
           </div>
         </div>
+        <!-- Custom skin editor pane (renderCustomEditor()). -->
+        <div class="shop-pane hidden" id="shop-pane-custom"></div>
+        <!-- Marketplace pane (renderMarketplace()). -->
+        <div class="shop-pane hidden" id="shop-pane-market"></div>
+        <!-- Battle Pass pane (renderBattlePass()). -->
+        <div class="shop-pane hidden" id="shop-pane-pass">
+          <div id="bp-panel"></div>
+        </div>
       </div>
+    </section>
+
+    <!-- ============ SEASONAL EVENT SCREEN ============ -->
+    <section class="screen season-screen" data-screen="season">
+      <header class="screen-head">
+        <button class="btn-back" data-go="menu">
+          <svg class="ic-svg lg"><use href="#i-arrow-left"/></svg>
+          <span data-i18n="nav.menu">Menu</span>
+        </button>
+        <h2 class="screen-title">
+          <svg class="ic-svg lg"><use href="#i-sparkle"/></svg>
+          <span data-i18n="season.title">Seasonal event</span>
+        </h2>
+        <span class="head-spacer"></span>
+      </header>
+      <div class="scroll-body" id="season-panel"></div>
     </section>
 
     <!-- ============ ADMIN SCREEN ============ -->
@@ -966,6 +1015,10 @@
 <script src="scripts/effects.js"></script>
 <script src="scripts/skins.js"></script>
 <script src="scripts/wallet.js"></script>
+<script src="scripts/mastery.js"></script>
+<script src="scripts/season.js"></script>
+<script src="scripts/battlepass.js"></script>
+<script src="scripts/customskins.js"></script>
 <script src="scripts/shop.js"></script>
 <script src="scripts/game.js"></script>
 <script src="scripts/hud.js"></script>

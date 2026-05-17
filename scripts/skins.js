@@ -241,4 +241,18 @@ function equipSkin(id){
 function applySkinAccent(){
   const s = currentSkin();
   document.documentElement.style.setProperty("--skin-accent", s.accent || "#7c5cff");
+  /* Keep the body[data-mastery] in sync with the freshly equipped
+     skin so the mastery aura CSS swaps tiers immediately. */
+  if (typeof applySkinMasteryEffect === "function") applySkinMasteryEffect();
+}
+
+/* Shallow metadata for any registered skin (base, seasonal, custom).
+   Returns null for unknown ids so callers can short-circuit. Used by
+   battlepass.js / season.js / mastery.js when they need to print a
+   skin's name or accent without depending on the SKINS dict layout. */
+function skinMeta(id){
+  if (!id || typeof SKINS === "undefined") return null;
+  const s = SKINS[id];
+  if (!s) return null;
+  return { id, name: s.name, accent: s.accent, palette: s.palette, custom: !!s.custom, seasonal: !!s.seasonal };
 }

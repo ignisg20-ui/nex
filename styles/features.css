@@ -1,0 +1,290 @@
+/* ============================================================
+   features.css
+   Styles for the new "season pass" wave of features:
+     • Battle Pass (shop pane #shop-pane-pass + #bp-panel)
+     • Seasonal event banner + screen (#menu-season-banner, #season-panel)
+     • Mastery aura on the board (body[data-mastery])
+     • Custom skin editor + marketplace (#shop-pane-custom, #shop-pane-market)
+   Kept in a single file so it's easy to lazy-load on demand later if
+   we trim startup work further. Variables piggy-back on the existing
+   --skin-accent / --glass-* tokens defined in base.css.
+   ============================================================ */
+
+/* ---------- Seasonal banner (menu tile) ---------- */
+.season-banner{
+  display:grid;
+  grid-template-columns:auto 1fr auto;
+  align-items:center;
+  gap:14px;
+  padding:14px 18px;
+  border-radius:18px;
+  margin:10px 0 16px;
+  width:100%;
+  text-align:left;
+  cursor:pointer;
+  background:linear-gradient(135deg, rgba(124,92,255,.22), rgba(36,189,255,.12));
+  border:1px solid rgba(124,92,255,.35);
+  transition: transform .12s ease, box-shadow .2s ease;
+}
+.season-banner:hover{ transform:translateY(-1px); box-shadow:0 8px 22px rgba(124,92,255,.18); }
+.season-banner .season-banner-icon{
+  width:46px; height:46px; display:grid; place-items:center;
+  border-radius:14px;
+  background:rgba(255,255,255,.06);
+  color:var(--skin-accent,#a98bff);
+}
+.season-banner .season-banner-text .big{ font-size:16px; font-weight:700; }
+.season-banner .season-banner-text .sub{ font-size:12px; opacity:.72; }
+.season-banner .season-banner-cta{ opacity:.55; transform:rotate(180deg); }
+
+/* ---------- Season pane ---------- */
+.season-screen .scroll-body{ padding:14px; }
+.season-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fill, minmax(160px, 1fr));
+  gap:12px;
+}
+.season-card{
+  position:relative;
+  display:flex; flex-direction:column;
+  gap:10px;
+  padding:14px;
+  border-radius:16px;
+  background:var(--glass-bg, rgba(255,255,255,.04));
+  border:1px solid rgba(255,255,255,.08);
+}
+.season-card.locked{ opacity:.92; }
+.season-card .season-card-icon{
+  width:100%; aspect-ratio:1;
+  border-radius:12px;
+  display:grid; place-items:center;
+  background:rgba(0,0,0,.25);
+}
+.season-card .season-card-title{ font-size:14px; font-weight:600; }
+.season-card .season-card-price{ font-family:monospace; font-size:13px; }
+.season-card .season-card-cta{ width:100%; }
+
+/* ---------- Battle Pass ---------- */
+.bp-head{
+  display:grid;
+  grid-template-columns:1fr auto;
+  align-items:center;
+  gap:10px;
+  margin-bottom:12px;
+}
+.bp-head .bp-title{ font-size:18px; font-weight:700; }
+.bp-head .bp-sub{ font-size:12px; opacity:.7; }
+.bp-progress{
+  position:relative;
+  height:10px;
+  border-radius:6px;
+  background:rgba(255,255,255,.08);
+  overflow:hidden;
+  margin:8px 0 14px;
+}
+.bp-progress > .bar{
+  position:absolute; left:0; top:0; bottom:0;
+  background:linear-gradient(90deg, #7c5cff, #24bdff);
+  border-radius:6px;
+  transition:width .25s ease;
+}
+.bp-premium-cta{ margin-bottom:14px; }
+
+.bp-tiers{
+  display:grid;
+  grid-template-columns:repeat(auto-fill, minmax(140px, 1fr));
+  gap:10px;
+}
+.bp-tier{
+  display:flex; flex-direction:column;
+  gap:6px;
+  padding:10px;
+  border-radius:14px;
+  background:var(--glass-bg, rgba(255,255,255,.04));
+  border:1px solid rgba(255,255,255,.08);
+  position:relative;
+}
+.bp-tier.current{ border-color: var(--skin-accent, #7c5cff); }
+.bp-tier .bp-num{
+  position:absolute; top:6px; right:8px;
+  font-family:monospace; font-size:11px; opacity:.55;
+}
+.bp-tier .bp-row{
+  display:flex; align-items:center; gap:8px;
+  font-size:12px;
+}
+.bp-tier .bp-row b{ font-weight:600; }
+.bp-tier .bp-row.claimable{ color:#a3eea2; }
+.bp-tier .bp-row.claimed{ opacity:.55; text-decoration:line-through; }
+.bp-tier .bp-row.locked{ opacity:.55; }
+.bp-tier .bp-row .ic{ width:18px; height:18px; opacity:.7; }
+.bp-tier .bp-claim{
+  margin-top:auto;
+  padding:6px 10px;
+  border-radius:10px;
+  border:1px solid var(--skin-accent, #7c5cff);
+  background:transparent;
+  color:#fff;
+  cursor:pointer;
+  font-size:12px;
+}
+.bp-tier .bp-claim:disabled{ opacity:.4; cursor:default; }
+.bp-tier.premium-only{
+  background:linear-gradient(135deg, rgba(124,92,255,.15), rgba(255,255,255,.02));
+}
+
+/* ---------- Custom skin editor ---------- */
+.custom-editor{
+  display:grid;
+  grid-template-columns:1fr;
+  gap:14px;
+  padding:6px 0 16px;
+}
+.custom-row{
+  display:flex; align-items:center; gap:10px;
+  flex-wrap:wrap;
+}
+.custom-row label{ font-size:12px; opacity:.72; min-width:80px; }
+.custom-row input[type="text"]{
+  flex:1 1 200px;
+  padding:8px 10px;
+  border-radius:10px;
+  background:rgba(255,255,255,.06);
+  border:1px solid rgba(255,255,255,.1);
+  color:inherit;
+}
+.custom-swatches{
+  display:grid;
+  grid-template-columns:repeat(6, 1fr);
+  gap:8px;
+}
+.custom-swatch{
+  display:flex; flex-direction:column; gap:4px; align-items:center;
+}
+.custom-swatch input[type="color"]{
+  width:100%; height:38px;
+  border:1px solid rgba(255,255,255,.18);
+  border-radius:10px;
+  padding:0;
+  background:transparent;
+  cursor:pointer;
+}
+.custom-swatch span{ font-size:10px; opacity:.6; font-family:monospace; }
+.custom-preview{
+  display:flex; gap:6px;
+  padding:10px;
+  border-radius:12px;
+  background:rgba(0,0,0,.25);
+  border:1px solid rgba(255,255,255,.06);
+  justify-content:center;
+}
+.custom-preview .cell{
+  width:24px; height:24px; border-radius:6px;
+}
+.custom-actions{ display:flex; gap:8px; flex-wrap:wrap; }
+.custom-list{
+  display:grid;
+  grid-template-columns:repeat(auto-fill, minmax(160px, 1fr));
+  gap:10px;
+  margin-top:8px;
+}
+.custom-card{
+  display:flex; flex-direction:column;
+  gap:8px;
+  padding:10px;
+  border-radius:14px;
+  background:var(--glass-bg, rgba(255,255,255,.04));
+  border:1px solid rgba(255,255,255,.08);
+}
+.custom-card .cc-name{ font-size:13px; font-weight:600; }
+.custom-card .cc-swatches{ display:flex; gap:4px; }
+.custom-card .cc-swatches > i{
+  flex:1 1 0; height:14px; border-radius:4px; display:block;
+}
+.custom-card .cc-actions{ display:flex; gap:6px; flex-wrap:wrap; }
+.custom-card .cc-actions .btn{ font-size:11px; padding:4px 8px; }
+
+/* ---------- Marketplace ---------- */
+.market-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fill, minmax(160px, 1fr));
+  gap:10px;
+}
+.market-card{
+  display:flex; flex-direction:column;
+  gap:8px;
+  padding:10px;
+  border-radius:14px;
+  background:var(--glass-bg, rgba(255,255,255,.04));
+  border:1px solid rgba(255,255,255,.08);
+}
+.market-card .mc-head{
+  display:flex; align-items:center; gap:6px;
+  font-size:13px; font-weight:600;
+}
+.market-card .mc-seller{ font-size:10px; opacity:.55; margin-left:auto; }
+.market-card .mc-swatches{ display:flex; gap:4px; }
+.market-card .mc-swatches > i{
+  flex:1 1 0; height:14px; border-radius:4px; display:block;
+}
+.market-card .mc-price{ font-family:monospace; font-size:12px; }
+.market-card .mc-actions{ display:flex; gap:6px; }
+.market-empty{
+  padding:20px;
+  text-align:center;
+  opacity:.7;
+  font-size:13px;
+}
+.market-cooldown{
+  font-size:11px;
+  opacity:.65;
+  margin-top:6px;
+}
+
+/* ---------- Mastery badge (used in shop skin cards) ---------- */
+.mastery-badge{
+  display:inline-flex;
+  align-items:center;
+  gap:4px;
+  padding:2px 8px;
+  border-radius:99px;
+  font-size:11px;
+  font-weight:600;
+  background:linear-gradient(135deg, rgba(124,92,255,.35), rgba(36,189,255,.2));
+  border:1px solid rgba(124,92,255,.5);
+}
+
+/* ---------- Mastery aura on the board ----------
+   The aura is purely visual — a soft outer glow that grows with
+   mastery level. We avoid box-shadows on every cell (those are
+   expensive on mobile); instead one outline on the board wrapper. */
+.board-shell{ position:relative; }
+body[data-mastery="1"] .board-shell::before,
+body[data-mastery="2"] .board-shell::before,
+body[data-mastery="3"] .board-shell::before,
+body[data-mastery="4"] .board-shell::before,
+body[data-mastery="5"] .board-shell::before{
+  content:"";
+  position:absolute;
+  inset:-8px;
+  border-radius:20px;
+  pointer-events:none;
+  background:radial-gradient(ellipse at center, var(--skin-accent, #7c5cff) 0%, transparent 65%);
+  opacity:.0;
+  transition:opacity .25s ease;
+  z-index:-1;
+  filter:blur(14px);
+}
+body[data-mastery="1"] .board-shell::before{ opacity:.10; }
+body[data-mastery="2"] .board-shell::before{ opacity:.16; }
+body[data-mastery="3"] .board-shell::before{ opacity:.22; inset:-10px; }
+body[data-mastery="4"] .board-shell::before{ opacity:.30; inset:-12px; filter:blur(18px); }
+body[data-mastery="5"] .board-shell::before{ opacity:.40; inset:-14px; filter:blur(22px); }
+
+/* ---------- Performance: cheap GPU-only animation for tier flips ---------- */
+@keyframes bp-claim-pop{
+  0%{ transform:scale(1); }
+  50%{ transform:scale(1.05); }
+  100%{ transform:scale(1); }
+}
+.bp-tier.just-claimed{ animation:bp-claim-pop .3s ease; }

@@ -45,6 +45,52 @@ const state = {
      definitions live in scripts/skins.js. Every player starts with
      the default skin already unlocked. */
   skins:  { equipped: "default", unlocked: ["default"] },
+  /* ----- Battle Pass -----
+     Seasonal progression track. `season` is the season id the player
+     is currently on (e.g. "2026-01"); changing season resets XP and
+     claim ledgers (the wallet/skins are kept). `xp` is current-season
+     XP; `claimedFree` / `claimedPremium` are arrays of tier indexes the
+     player has already claimed; `premium` flips on after the player
+     buys the premium track (or admin grants it). */
+  battlepass: {
+    season: "",
+    xp: 0,
+    claimedFree: [],
+    claimedPremium: [],
+    premium: false,
+  },
+  /* ----- Seasonal event -----
+     Tracks which seasonal cosmetic packs the player has already
+     unlocked. The list of available seasonal skins is defined in
+     scripts/season.js and rotates with `seasonId()`. */
+  seasonal: {
+    unlocked: [],
+  },
+  /* ----- Mastery per skin -----
+     Per-skin XP plus the highest claimed tier (so we can show "Lvl X"
+     badges in the shop). Keyed by skin id. */
+  mastery: {},
+  /* ----- Custom skin inventory -----
+     `owned` is the player's catalogue of self-made skins
+     (each: { id, name, palette[6], accent, createdAt }).
+     `equipped` mirrors skins.equipped when a custom skin is active
+     so the renderer can resolve the palette. `lastListedAt` is the
+     unix ms of the last marketplace listing — used to enforce the
+     once-per-24h rule for non-admin players. */
+  customSkins: {
+    owned: [],
+    equipped: "",
+    lastListedAt: 0,
+  },
+  /* ----- Marketplace -----
+     Local-device pool of listings created by this player + admin
+     curated listings seeded on first run. Buyers can purchase any
+     listing for HEX; once purchased the entry is removed and the
+     skin is copied into `customSkins.owned`. */
+  marketplace: {
+    listings: [],
+    purchased: [],
+  },
   // live, not persisted
   run: null,
 };
