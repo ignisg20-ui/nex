@@ -145,10 +145,11 @@ public class MainActivity extends Activity {
                 File f = profileFile(name);
                 if (f == null) return false;
                 f.getParentFile().mkdirs();
-                FileOutputStream out = new FileOutputStream(f, false);
-                OutputStreamWriter w = new OutputStreamWriter(out, StandardCharsets.UTF_8);
-                w.write(json == null ? "" : json);
-                w.flush(); w.close(); out.close();
+                try (FileOutputStream out = new FileOutputStream(f, false);
+                     OutputStreamWriter w = new OutputStreamWriter(out, StandardCharsets.UTF_8)) {
+                    w.write(json == null ? "" : json);
+                    w.flush();
+                }
                 return true;
             } catch (Throwable t) {
                 android.util.Log.w("HEXON", "saveProfile failed: " + t.getMessage());
@@ -162,13 +163,13 @@ public class MainActivity extends Activity {
             try {
                 File f = profileFile(name);
                 if (f == null || !f.isFile()) return "";
-                FileInputStream in = new FileInputStream(f);
-                ByteArrayOutputStream bos = new ByteArrayOutputStream();
-                byte[] buf = new byte[4096];
-                int n;
-                while ((n = in.read(buf)) > 0) bos.write(buf, 0, n);
-                in.close();
-                return new String(bos.toByteArray(), StandardCharsets.UTF_8);
+                try (FileInputStream in = new FileInputStream(f);
+                     ByteArrayOutputStream bos = new ByteArrayOutputStream()) {
+                    byte[] buf = new byte[4096];
+                    int n;
+                    while ((n = in.read(buf)) > 0) bos.write(buf, 0, n);
+                    return new String(bos.toByteArray(), StandardCharsets.UTF_8);
+                }
             } catch (Throwable t) {
                 android.util.Log.w("HEXON", "loadProfile failed: " + t.getMessage());
                 return "";

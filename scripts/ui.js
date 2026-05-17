@@ -301,7 +301,7 @@ async function handleLoginConfirm(){
    replace `state` because other modules hold a direct reference to it. */
 function applyLoadedSnapshot(snap){
   if(!snap || typeof snap !== "object") return;
-  const k = ["profile","stats","settings","hidden","dailyTasks","leaderboards","wallet","skins","usedActivationCodes","activations"];
+  const k = ["profile","stats","settings","hidden","dailyTasks","leaderboards","wallet","skins","usedActivationCodes","activationUsage","activations","battlepass","seasonal","mastery","customSkins","marketplace"];
   k.forEach(key => { if(snap[key] !== undefined) state[key] = snap[key]; });
   state.achievements = new Set(Array.isArray(snap.achievements) ? snap.achievements : []);
   state.run = null;

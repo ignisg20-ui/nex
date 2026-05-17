@@ -1,13 +1,13 @@
 /* ============================================================
    features.css
    Styles for the new "season pass" wave of features:
-     • Battle Pass (shop pane #shop-pane-pass + #bp-panel)
-     • Seasonal event banner + screen (#menu-season-banner, #season-panel)
+     • Battle Pass (#bp-panel)
+     • Seasonal banner (menu) + Season screen (#season-panel)
+     • Custom skin editor (#shop-pane-custom)
+     • Marketplace (#shop-pane-market)
      • Mastery aura on the board (body[data-mastery])
-     • Custom skin editor + marketplace (#shop-pane-custom, #shop-pane-market)
-   Kept in a single file so it's easy to lazy-load on demand later if
-   we trim startup work further. Variables piggy-back on the existing
-   --skin-accent / --glass-* tokens defined in base.css.
+   Variables piggy-back on the existing --skin-accent / --glass-* tokens
+   defined in base.css.
    ============================================================ */
 
 /* ---------- Seasonal banner (menu tile) ---------- */
@@ -35,13 +35,24 @@
 }
 .season-banner .season-banner-text .big{ font-size:16px; font-weight:700; }
 .season-banner .season-banner-text .sub{ font-size:12px; opacity:.72; }
-.season-banner .season-banner-cta{ opacity:.55; transform:rotate(180deg); }
+.season-banner .season-banner-cta{ opacity:.55; }
 
-/* ---------- Season pane ---------- */
+/* ---------- Season screen ---------- */
 .season-screen .scroll-body{ padding:14px; }
+.season-head{
+  padding:14px;
+  border-radius:16px;
+  margin-bottom:14px;
+}
+.season-head .season-title{
+  display:flex; align-items:center; gap:8px;
+  font-size:18px; font-weight:700;
+}
+.season-head .season-sub{ font-size:13px; opacity:.78; margin-top:4px; }
+.season-head .season-desc{ font-size:13px; opacity:.7; margin:8px 0 0; }
 .season-grid{
   display:grid;
-  grid-template-columns:repeat(auto-fill, minmax(160px, 1fr));
+  grid-template-columns:repeat(auto-fill, minmax(170px, 1fr));
   gap:12px;
 }
 .season-card{
@@ -53,73 +64,163 @@
   background:var(--glass-bg, rgba(255,255,255,.04));
   border:1px solid rgba(255,255,255,.08);
 }
-.season-card.locked{ opacity:.92; }
-.season-card .season-card-icon{
-  width:100%; aspect-ratio:1;
+.season-card .season-card-art{
+  display:flex; gap:4px;
+  padding:8px;
   border-radius:12px;
-  display:grid; place-items:center;
   background:rgba(0,0,0,.25);
+  justify-content:center;
 }
-.season-card .season-card-title{ font-size:14px; font-weight:600; }
-.season-card .season-card-price{ font-family:monospace; font-size:13px; }
-.season-card .season-card-cta{ width:100%; }
+.season-card .season-card-art > i{
+  flex:1 1 0; height:24px; border-radius:6px; display:block;
+  box-shadow: inset 0 -2px 0 rgba(0,0,0,.18);
+}
+.season-card .season-card-name{ font-size:14px; font-weight:600; text-align:center; }
+.season-card .season-card-foot{
+  display:flex; justify-content:center;
+  margin-top:auto;
+}
+.season-pill{
+  display:inline-flex; align-items:center; gap:4px;
+  padding:4px 10px; border-radius:99px;
+  font-size:12px;
+  background:rgba(124,92,255,.15);
+  border:1px solid rgba(124,92,255,.3);
+}
+.season-pill.on{
+  background:linear-gradient(135deg, rgba(46,213,115,.25), rgba(124,92,255,.15));
+  border-color:rgba(46,213,115,.5);
+}
 
 /* ---------- Battle Pass ---------- */
+#bp-panel{ padding:6px 2px 16px; }
 .bp-head{
+  padding:14px 16px;
+  border-radius:16px;
+  margin-bottom:14px;
   display:grid;
-  grid-template-columns:1fr auto;
-  align-items:center;
   gap:10px;
-  margin-bottom:12px;
 }
-.bp-head .bp-title{ font-size:18px; font-weight:700; }
-.bp-head .bp-sub{ font-size:12px; opacity:.7; }
+.bp-head-top{
+  display:flex; align-items:center; justify-content:space-between;
+  flex-wrap:wrap; gap:8px;
+}
+.bp-head .bp-title{
+  display:flex; align-items:center; gap:8px;
+  font-size:18px;
+}
+.bp-head .bp-season{
+  font-size:12px;
+  opacity:.72;
+  font-family:monospace;
+}
 .bp-progress{
+  display:flex; flex-direction:column; gap:6px;
+}
+.bp-progress-bar{
   position:relative;
   height:10px;
   border-radius:6px;
   background:rgba(255,255,255,.08);
   overflow:hidden;
-  margin:8px 0 14px;
 }
-.bp-progress > .bar{
+.bp-progress-fill{
   position:absolute; left:0; top:0; bottom:0;
   background:linear-gradient(90deg, #7c5cff, #24bdff);
   border-radius:6px;
   transition:width .25s ease;
 }
-.bp-premium-cta{ margin-bottom:14px; }
-
-.bp-tiers{
-  display:grid;
-  grid-template-columns:repeat(auto-fill, minmax(140px, 1fr));
-  gap:10px;
+.bp-progress-lbl{
+  font-size:11px; opacity:.7; text-align:right;
 }
-.bp-tier{
-  display:flex; flex-direction:column;
-  gap:6px;
-  padding:10px;
-  border-radius:14px;
-  background:var(--glass-bg, rgba(255,255,255,.04));
-  border:1px solid rgba(255,255,255,.08);
-  position:relative;
+.bp-foot{
+  display:flex; align-items:center; justify-content:space-between;
+  gap:10px; flex-wrap:wrap;
 }
-.bp-tier.current{ border-color: var(--skin-accent, #7c5cff); }
-.bp-tier .bp-num{
-  position:absolute; top:6px; right:8px;
-  font-family:monospace; font-size:11px; opacity:.55;
-}
-.bp-tier .bp-row{
-  display:flex; align-items:center; gap:8px;
+.bp-tier-lbl{ font-size:13px; opacity:.85; }
+.bp-tier-lbl b{ font-size:16px; font-weight:700; }
+.bp-buy{ font-size:13px; }
+.bp-prem-on{
+  display:inline-flex; align-items:center; gap:6px;
+  padding:6px 12px;
+  border-radius:99px;
   font-size:12px;
+  background:linear-gradient(135deg, rgba(46,213,115,.2), rgba(124,92,255,.15));
+  border:1px solid rgba(46,213,115,.4);
 }
-.bp-tier .bp-row b{ font-weight:600; }
-.bp-tier .bp-row.claimable{ color:#a3eea2; }
-.bp-tier .bp-row.claimed{ opacity:.55; text-decoration:line-through; }
-.bp-tier .bp-row.locked{ opacity:.55; }
-.bp-tier .bp-row .ic{ width:18px; height:18px; opacity:.7; }
-.bp-tier .bp-claim{
-  margin-top:auto;
+
+.bp-track-head{
+  display:grid;
+  grid-template-columns:48px 1fr 1fr 110px;
+  gap:8px;
+  padding:8px 12px;
+  font-size:11px;
+  text-transform:uppercase;
+  letter-spacing:.06em;
+  opacity:.55;
+}
+.bp-track-head > :nth-child(1){ grid-column:2; text-align:center; }
+.bp-track-head > :nth-child(2){ grid-column:3; text-align:center; }
+.bp-track{
+  display:flex;
+  flex-direction:column;
+  gap:6px;
+}
+.bp-row{
+  display:grid;
+  grid-template-columns:48px 1fr 1fr 110px;
+  gap:8px;
+  align-items:stretch;
+  padding:6px;
+  border-radius:12px;
+  background:var(--glass-bg, rgba(255,255,255,.03));
+  border:1px solid rgba(255,255,255,.06);
+}
+.bp-row.reached{
+  border-color:rgba(124,92,255,.35);
+  background:linear-gradient(180deg, rgba(124,92,255,.10), rgba(255,255,255,.02));
+}
+.bp-row-num{
+  display:grid; place-items:center;
+  font-family:monospace;
+  font-size:14px;
+  font-weight:700;
+  opacity:.65;
+  border-right:1px solid rgba(255,255,255,.08);
+}
+.bp-row.reached .bp-row-num{ opacity:1; color:var(--skin-accent,#a98bff); }
+.bp-cell{
+  position:relative;
+  display:flex; flex-direction:column; align-items:center; justify-content:center;
+  gap:4px;
+  padding:8px 6px;
+  border-radius:10px;
+  background:rgba(255,255,255,.04);
+  border:1px solid rgba(255,255,255,.06);
+  min-height:54px;
+}
+.bp-cell-empty{ opacity:.35; }
+.bp-cell.claimed{
+  opacity:.5;
+}
+.bp-cell.claimed::after{
+  content:"✓";
+  position:absolute;
+  top:4px; right:6px;
+  font-size:12px;
+  color:#3ddc97;
+}
+.bp-cell.claimable{
+  border-color: var(--skin-accent,#7c5cff);
+  box-shadow: 0 0 0 1px rgba(124,92,255,.35) inset, 0 4px 14px rgba(124,92,255,.18);
+}
+.bp-reward-icon{ display:grid; place-items:center; }
+.bp-reward-val{ font-size:12px; font-weight:600; text-align:center; line-height:1.15; }
+.bp-row-actions{
+  display:flex; flex-direction:column; gap:4px;
+  align-items:stretch; justify-content:center;
+}
+.bp-claim{
   padding:6px 10px;
   border-radius:10px;
   border:1px solid var(--skin-accent, #7c5cff);
@@ -127,66 +228,129 @@
   color:#fff;
   cursor:pointer;
   font-size:12px;
+  transition: background .12s ease, transform .12s ease;
 }
-.bp-tier .bp-claim:disabled{ opacity:.4; cursor:default; }
-.bp-tier.premium-only{
-  background:linear-gradient(135deg, rgba(124,92,255,.15), rgba(255,255,255,.02));
+.bp-claim:hover{ background:rgba(124,92,255,.18); }
+.bp-claim:active{ transform:scale(.97); }
+.bp-claim.prem{
+  border-color:#ffd86b;
+  background:linear-gradient(135deg, rgba(255,216,107,.18), rgba(255,138,77,.12));
+}
+
+@media (max-width: 520px){
+  .bp-track-head{ grid-template-columns:36px 1fr 1fr 80px; font-size:10px; }
+  .bp-row{ grid-template-columns:36px 1fr 1fr 80px; }
+  .bp-cell{ min-height:46px; }
+  .bp-claim{ font-size:11px; padding:5px 6px; }
 }
 
 /* ---------- Custom skin editor ---------- */
+.shop-pane-hint{
+  font-size:12px;
+  opacity:.7;
+  margin:4px 2px 12px;
+}
 .custom-editor{
   display:grid;
   grid-template-columns:1fr;
   gap:14px;
-  padding:6px 0 16px;
+  padding:14px;
+  border-radius:16px;
+  margin-bottom:14px;
+  background:var(--glass-bg, rgba(255,255,255,.04));
+  border:1px solid rgba(255,255,255,.08);
 }
-.custom-row{
+.custom-editor-name{
   display:flex; align-items:center; gap:10px;
   flex-wrap:wrap;
 }
-.custom-row label{ font-size:12px; opacity:.72; min-width:80px; }
-.custom-row input[type="text"]{
+.custom-editor-name label{ font-size:12px; opacity:.72; min-width:80px; }
+.custom-editor-name input[type="text"]{
   flex:1 1 200px;
   padding:8px 10px;
   border-radius:10px;
   background:rgba(255,255,255,.06);
   border:1px solid rgba(255,255,255,.1);
   color:inherit;
+  font-size:14px;
 }
-.custom-swatches{
+.custom-editor-row{
   display:grid;
   grid-template-columns:repeat(6, 1fr);
   gap:8px;
 }
-.custom-swatch{
-  display:flex; flex-direction:column; gap:4px; align-items:center;
-}
-.custom-swatch input[type="color"]{
-  width:100%; height:38px;
-  border:1px solid rgba(255,255,255,.18);
-  border-radius:10px;
-  padding:0;
-  background:transparent;
+.custom-cell{
+  position:relative;
+  display:flex; flex-direction:column; align-items:center; gap:4px;
   cursor:pointer;
 }
-.custom-swatch span{ font-size:10px; opacity:.6; font-family:monospace; }
-.custom-preview{
-  display:flex; gap:6px;
+.custom-cell-input{
+  position:absolute; inset:0;
+  opacity:0;
+  cursor:pointer;
+}
+.custom-cell-swatch{
+  width:100%;
+  aspect-ratio:1;
+  border-radius:12px;
+  border:1px solid rgba(255,255,255,.18);
+  display:block;
+  box-shadow: inset 0 -3px 0 rgba(0,0,0,.18);
+  transition: transform .12s ease;
+}
+.custom-cell:hover .custom-cell-swatch{ transform:translateY(-1px); }
+.custom-cell-num{ font-size:10px; opacity:.55; font-family:monospace; font-weight:400; }
+.custom-editor-preview{
+  display:flex; flex-direction:column; gap:8px;
   padding:10px;
   border-radius:12px;
-  background:rgba(0,0,0,.25);
+  background:rgba(0,0,0,.22);
   border:1px solid rgba(255,255,255,.06);
-  justify-content:center;
 }
-.custom-preview .cell{
-  width:24px; height:24px; border-radius:6px;
+.custom-editor-preview > b{ font-size:11px; opacity:.6; text-transform:uppercase; letter-spacing:.05em; }
+.custom-preview-pieces{
+  display:flex; gap:14px; flex-wrap:wrap; justify-content:center;
+  padding:6px 0;
 }
-.custom-actions{ display:flex; gap:8px; flex-wrap:wrap; }
+.custom-preview-piece{
+  display:grid;
+  gap:2px;
+}
+.custom-preview-cell{
+  width:14px; height:14px; border-radius:3px;
+  background:var(--cell-color, #7c5cff);
+  box-shadow: inset 0 -2px 0 rgba(0,0,0,.18);
+}
+.custom-preview-cell.gap{
+  background:transparent;
+  box-shadow:none;
+}
+.custom-editor-actions{
+  display:flex; gap:8px; flex-wrap:wrap;
+}
+
 .custom-list{
   display:grid;
-  grid-template-columns:repeat(auto-fill, minmax(160px, 1fr));
+  grid-template-columns:repeat(auto-fill, minmax(170px, 1fr));
   gap:10px;
-  margin-top:8px;
+}
+.custom-list-title{
+  grid-column: 1/-1;
+  font-size:13px;
+  opacity:.7;
+  text-transform:uppercase;
+  letter-spacing:.05em;
+  margin:8px 0 0;
+  font-weight:600;
+}
+.custom-empty{
+  grid-column:1/-1;
+  padding:24px 14px;
+  text-align:center;
+  opacity:.6;
+  font-size:13px;
+  border:1px dashed rgba(255,255,255,.1);
+  border-radius:14px;
 }
 .custom-card{
   display:flex; flex-direction:column;
@@ -196,18 +360,81 @@
   background:var(--glass-bg, rgba(255,255,255,.04));
   border:1px solid rgba(255,255,255,.08);
 }
-.custom-card .cc-name{ font-size:13px; font-weight:600; }
-.custom-card .cc-swatches{ display:flex; gap:4px; }
-.custom-card .cc-swatches > i{
+.custom-card-strip{
+  display:flex; gap:4px;
+  padding:6px;
+  border-radius:8px;
+  background:rgba(0,0,0,.2);
+}
+.custom-card-strip > i{
   flex:1 1 0; height:14px; border-radius:4px; display:block;
 }
-.custom-card .cc-actions{ display:flex; gap:6px; flex-wrap:wrap; }
-.custom-card .cc-actions .btn{ font-size:11px; padding:4px 8px; }
+.custom-card-name{ font-size:13px; font-weight:600; }
+.custom-card-actions{ display:flex; gap:4px; flex-wrap:wrap; }
+.custom-card-actions .btn{ font-size:11px; padding:4px 8px; }
+.custom-card-on{
+  font-size:11px;
+  padding:4px 10px;
+  border-radius:99px;
+  background:rgba(46,213,115,.18);
+  border:1px solid rgba(46,213,115,.4);
+  color:#a3eea2;
+}
+
+/* List-on-market modal */
+.list-skin-modal{ max-width:380px; }
+.list-skin-strip{
+  display:flex; gap:4px;
+  padding:8px;
+  margin:8px 0;
+  border-radius:10px;
+  background:rgba(0,0,0,.22);
+}
+.list-skin-strip > i{
+  flex:1 1 0; height:22px; border-radius:6px; display:block;
+}
+.list-skin-row{
+  display:flex; align-items:center; gap:10px;
+  margin:10px 0;
+}
+.list-skin-row label{ font-size:12px; opacity:.7; min-width:90px; }
+.list-skin-row input[type="number"]{
+  flex:1 1 0;
+  padding:8px 10px;
+  border-radius:10px;
+  background:rgba(255,255,255,.06);
+  border:1px solid rgba(255,255,255,.1);
+  color:inherit;
+  font-family:monospace;
+  font-size:14px;
+}
+.list-skin-cool{
+  font-size:11px;
+  opacity:.7;
+  padding:6px 10px;
+  border-radius:10px;
+  background:rgba(255,138,77,.08);
+  border:1px solid rgba(255,138,77,.25);
+}
+.list-skin-cool.ok{
+  background:rgba(46,213,115,.08);
+  border-color:rgba(46,213,115,.3);
+  color:#a3eea2;
+}
 
 /* ---------- Marketplace ---------- */
+.market-status{
+  padding:10px 14px;
+  border-radius:12px;
+  margin-bottom:12px;
+}
+.market-status-line{
+  font-size:12px;
+  opacity:.85;
+}
 .market-grid{
   display:grid;
-  grid-template-columns:repeat(auto-fill, minmax(160px, 1fr));
+  grid-template-columns:repeat(auto-fill, minmax(170px, 1fr));
   gap:10px;
 }
 .market-card{
@@ -218,27 +445,34 @@
   background:var(--glass-bg, rgba(255,255,255,.04));
   border:1px solid rgba(255,255,255,.08);
 }
-.market-card .mc-head{
-  display:flex; align-items:center; gap:6px;
-  font-size:13px; font-weight:600;
+.market-card-strip{
+  display:flex; gap:4px;
+  padding:6px;
+  border-radius:8px;
+  background:rgba(0,0,0,.2);
 }
-.market-card .mc-seller{ font-size:10px; opacity:.55; margin-left:auto; }
-.market-card .mc-swatches{ display:flex; gap:4px; }
-.market-card .mc-swatches > i{
-  flex:1 1 0; height:14px; border-radius:4px; display:block;
+.market-card-strip > i{
+  flex:1 1 0; height:18px; border-radius:4px; display:block;
 }
-.market-card .mc-price{ font-family:monospace; font-size:12px; }
-.market-card .mc-actions{ display:flex; gap:6px; }
-.market-empty{
-  padding:20px;
-  text-align:center;
-  opacity:.7;
+.market-card-name{ font-size:13px; font-weight:600; }
+.market-card-seller{ font-size:11px; opacity:.6; }
+.market-card-foot{
+  display:flex; align-items:center; justify-content:space-between;
+  gap:8px;
+  margin-top:auto;
+}
+.market-price{
+  display:inline-flex; align-items:center; gap:4px;
   font-size:13px;
 }
-.market-cooldown{
-  font-size:11px;
-  opacity:.65;
-  margin-top:6px;
+.market-empty{
+  grid-column:1/-1;
+  padding:24px 14px;
+  text-align:center;
+  opacity:.6;
+  font-size:13px;
+  border:1px dashed rgba(255,255,255,.1);
+  border-radius:14px;
 }
 
 /* ---------- Mastery badge (used in shop skin cards) ---------- */
@@ -254,10 +488,7 @@
   border:1px solid rgba(124,92,255,.5);
 }
 
-/* ---------- Mastery aura on the board ----------
-   The aura is purely visual — a soft outer glow that grows with
-   mastery level. We avoid box-shadows on every cell (those are
-   expensive on mobile); instead one outline on the board wrapper. */
+/* ---------- Mastery aura on the board ---------- */
 .board-shell{ position:relative; }
 body[data-mastery="1"] .board-shell::before,
 body[data-mastery="2"] .board-shell::before,
@@ -270,7 +501,7 @@ body[data-mastery="5"] .board-shell::before{
   border-radius:20px;
   pointer-events:none;
   background:radial-gradient(ellipse at center, var(--skin-accent, #7c5cff) 0%, transparent 65%);
-  opacity:.0;
+  opacity:0;
   transition:opacity .25s ease;
   z-index:-1;
   filter:blur(14px);
@@ -287,4 +518,4 @@ body[data-mastery="5"] .board-shell::before{ opacity:.40; inset:-14px; filter:bl
   50%{ transform:scale(1.05); }
   100%{ transform:scale(1); }
 }
-.bp-tier.just-claimed{ animation:bp-claim-pop .3s ease; }
+.bp-row.just-claimed{ animation:bp-claim-pop .3s ease; }
